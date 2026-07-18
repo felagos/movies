@@ -21,7 +21,17 @@ yarn preview   # preview the production build
 
 ## Testing
 
-No test runner configured yet. When adding tests, use the `ts-test-structure` skill to scaffold and organize test files. See [docs/testing.md](docs/testing.md) for conventions and setup guidance.
+Vitest + React Testing Library (jsdom environment), configured in the `test` block of `vite.config.ts`.
+
+```
+yarn test            # run once
+yarn test:watch      # watch mode
+yarn test:coverage   # run with V8 coverage report
+```
+
+Coverage threshold: 90% lines/functions/branches/statements, enforced **per file** (`coverage.thresholds.perFile`), not just in aggregate. `src/main.tsx` and `src/router.tsx` are excluded from coverage. See [docs/testing.md](docs/testing.md) for the full exclude list and reasoning.
+
+Use the `ts-test-structure` skill to scaffold new test files. Tests are colocated next to source (`Card.tsx` → `Card.test.tsx`), matching the folder-per-component convention.
 
 ## Environment
 
@@ -39,7 +49,7 @@ Requires `VITE_TMDB_TOKEN` in `.env` — a TMDB **v3 API key** (not the v4 JWT b
 **Routing** (`react-router-dom`, `createBrowserRouter` in `main.tsx`): `/` → `Home`, `/:mediaType/:id` → `Detail`, both nested under `App` (which renders the header + `<Outlet>`). `mediaType` is `'movie' | 'tv'` and is threaded through everywhere as a literal union type (`MediaType` in `api/tmdb.ts`), not a boolean flag — reuse that type rather than inventing string literals.
 
 **Hover-preview card (`components/Card/Card.tsx`)** — the trickiest piece, don't casually restyle without understanding why it's built this way:
-- On `mouseenter`, a 700ms timer delays setting `isHovering`, matching Netflix's hover-intent delay. `useVideos` is only `enabled` once `isHovering` is true (lazy-fetch trailer, not prefetched for every card).
+- On `mouseenter`, a 450ms timer delays setting `isHovering`, matching Netflix's hover-intent delay. `useVideos` is only `enabled` once `isHovering` is true (lazy-fetch trailer, not prefetched for every card).
 - `.card__overlay` (the expanded info panel) is `position: absolute`, deliberately taken out of normal flex flow — it must **never** contribute to `.card`'s layout height, because `.carousel__track` is a flex row and letting the overlay affect height would grow/shift the entire row on hover.
 - `.card__media` scales via `transform: scale(1.15)` with `transform-origin: center bottom` on hover — anchored at the bottom so growth goes only upward, avoiding overlap with the absolutely-positioned overlay below it.
 - `.carousel__track` has `overflow-x: auto` for native horizontal scroll snapping. Per CSS spec, an element with `overflow-x` set to anything but `visible` forces `overflow-y` to compute as `auto` too — so any vertical overflow gets clipped. This is why the track reserves extra `padding-top`/`padding-bottom` (inside a `@media (hover: hover)` block, so touch devices don't pay for it) sized to fit the worst-case expanded card. If you change the hover scale factor, overlay height, or transform-origin, you must recompute and adjust this padding (and the carousel arrow `top`/`bottom` offsets, which are pinned to match the same box) or hover previews will get silently clipped again.

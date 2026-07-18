@@ -13,6 +13,7 @@ function Hero({ item }: HeroProps) {
   return (
     <section
       className="hero"
+      data-testid="hero"
       style={{ backgroundImage: `url(${imageUrl(item.backdropPath, 'w1280')})` }}
     >
       <div className="hero__scrim" />
