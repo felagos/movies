@@ -19,7 +19,9 @@ yarn lint      # oxlint
 yarn preview   # preview the production build
 ```
 
-There is no test suite configured. There is no single-file/single-test run command since no test runner is present.
+## Testing
+
+No test runner configured yet. When adding tests, use the `ts-test-structure` skill to scaffold and organize test files. See [docs/testing.md](docs/testing.md) for conventions and setup guidance.
 
 ## Environment
 
