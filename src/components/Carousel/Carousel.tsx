@@ -17,13 +17,14 @@ function Carousel({ title, items, isLoading = false }: CarouselProps): ReactNode
 
   function scroll(direction: 'left' | 'right') {
     const track = trackRef.current
+    /* v8 ignore next -- defensive guard; React attaches the ref before any click can fire */
     if (!track) return
     const amount = track.clientWidth * 0.8
     track.scrollBy({ left: direction === 'left' ? -amount : amount, behavior: 'smooth' })
   }
 
   return (
-    <section className="carousel">
+    <section className="carousel" data-testid="carousel">
       <h2 className="carousel__title">{title}</h2>
       <div className="carousel__wrapper">
         <button
@@ -35,7 +36,7 @@ function Carousel({ title, items, isLoading = false }: CarouselProps): ReactNode
           ‹
         </button>
 
-        <div className="carousel__track" ref={trackRef}>
+        <div className="carousel__track" ref={trackRef} data-testid="carousel-track">
           {isLoading
             ? Array.from({ length: SKELETON_COUNT }, (_, index) => <CardSkeleton key={index} />)
             : items.map((item) => <Card key={`${item.mediaType}-${item.id}`} media={item} />)}

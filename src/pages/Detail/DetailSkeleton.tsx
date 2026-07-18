@@ -1,7 +1,7 @@
 function DetailSkeleton() {
   return (
     <div className="detail">
-      <div className="detail__hero detail__hero--skeleton">
+      <div className="detail__hero detail__hero--skeleton" data-testid="detail-skeleton-hero">
         <div className="detail__hero-overlay">
           <div className="detail__poster skeleton" />
           <div className="detail__info">
