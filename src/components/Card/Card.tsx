@@ -58,7 +58,7 @@ function Card({ media }: CardProps) {
         ) : (
           <img
             className="card__poster"
-            src={imageUrl(media.posterPath, 'w500')}
+            src={imageUrl(media.posterPath, 'w300')}
             alt={media.title}
             loading="lazy"
           />

@@ -25,12 +25,12 @@ function Detail() {
     <div className="detail">
       <div
         className="detail__hero"
-        style={{ backgroundImage: `url(${imageUrl(details.backdropPath, 'original')})` }}
+        style={{ backgroundImage: `url(${imageUrl(details.backdropPath, 'w1280')})` }}
       >
         <div className="detail__hero-overlay">
           <img
             className="detail__poster"
-            src={imageUrl(details.posterPath, 'w500')}
+            src={imageUrl(details.posterPath, 'w300')}
             alt={details.title}
           />
           <div className="detail__info">
