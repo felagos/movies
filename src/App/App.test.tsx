@@ -31,9 +31,13 @@ describe('App', () => {
     expect(homeLinks[0]).toHaveAttribute('href', '/')
   })
 
-  test('renders Movies and TV Shows as non-navigating placeholders', () => {
+  test('renders nav Movies Link pointing to "/movies"', () => {
     renderApp()
-    expect(screen.getByText('Movies')).toHaveAttribute('href', '#')
+    expect(screen.getByText('Movies')).toHaveAttribute('href', '/movies')
+  })
+
+  test('renders TV Shows as a non-navigating placeholder', () => {
+    renderApp()
     expect(screen.getByText('TV Shows')).toHaveAttribute('href', '#')
   })
 

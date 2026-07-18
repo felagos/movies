@@ -10,7 +10,7 @@ function App() {
         </Link>
         <nav className="site-nav">
           <Link to="/">Home</Link>
-          <a href="#">Movies</a>
+          <Link to="/movies">Movies</Link>
           <a href="#">TV Shows</a>
         </nav>
       </header>

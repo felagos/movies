@@ -1,0 +1,38 @@
+.movies {
+  padding: 24px 48px;
+}
+
+@media (max-width: 640px) {
+  .movies {
+    padding: 24px 16px;
+  }
+}
+
+.movies__tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.movies__tab {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.movies__tab--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.movies__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 24px 14px;
+}

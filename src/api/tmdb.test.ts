@@ -5,6 +5,7 @@ import {
   getVideos,
   getBestTrailer,
   getDetails,
+  getMovies,
   imageUrl,
   type Video,
 } from './tmdb'
@@ -245,6 +246,45 @@ describe('tmdb.ts', () => {
       expect(details.videos).toHaveLength(1)
       expect(details.title).toBe('Movie')
       expect(details.mediaType).toBe('movie')
+    })
+  })
+
+  describe('getMovies', () => {
+    test('requests /movie/{category} with language and page params', async () => {
+      mockFetchOnce({ page: 1, results: [], total_pages: 1 })
+      await getMovies('top_rated', 1)
+
+      const calledUrl = (fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as URL
+      expect(calledUrl.toString()).toContain('/movie/top_rated')
+      expect(calledUrl.searchParams.get('language')).toBe('en-US')
+      expect(calledUrl.searchParams.get('page')).toBe('1')
+    })
+
+    test('maps results to MediaSummary items and returns page/totalPages', async () => {
+      mockFetchOnce({
+        page: 2,
+        total_pages: 10,
+        results: [
+          { id: 1, title: 'Movie A', overview: '', poster_path: null, backdrop_path: null, vote_average: 6, release_date: '2022-01-01' },
+        ],
+      })
+
+      const result = await getMovies('popular', 2)
+
+      expect(result.page).toBe(2)
+      expect(result.totalPages).toBe(10)
+      expect(result.items).toEqual([
+        {
+          id: 1,
+          mediaType: 'movie',
+          title: 'Movie A',
+          overview: '',
+          posterPath: null,
+          backdropPath: null,
+          voteAverage: 6,
+          releaseDate: '2022-01-01',
+        },
+      ])
     })
   })
 

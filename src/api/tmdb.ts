@@ -131,3 +131,29 @@ export function imageUrl(path: string | null, size: 'w300' | 'w500' | 'w1280' | 
   if (!path) return ''
   return `https://image.tmdb.org/t/p/${size}${path}`
 }
+
+export type MovieCategory = 'popular' | 'top_rated' | 'now_playing' | 'upcoming'
+
+interface TmdbRawPage {
+  page: number
+  results: TmdbRawItem[]
+  total_pages: number
+}
+
+export interface MoviesPage {
+  items: MediaSummary[]
+  page: number
+  totalPages: number
+}
+
+export async function getMovies(category: MovieCategory, page: number): Promise<MoviesPage> {
+  const data = await tmdbFetch<TmdbRawPage>(`/movie/${category}`, {
+    language: 'en-US',
+    page: String(page),
+  })
+  return {
+    items: data.results.map((item) => toSummary(item, 'movie')),
+    page: data.page,
+    totalPages: data.total_pages,
+  }
+}
