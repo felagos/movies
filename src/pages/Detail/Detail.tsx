@@ -25,6 +25,7 @@ function Detail() {
     <div className="detail">
       <div
         className="detail__hero"
+        data-testid="detail-hero"
         style={{ backgroundImage: `url(${imageUrl(details.backdropPath, 'w1280')})` }}
       >
         <div className="detail__hero-overlay">

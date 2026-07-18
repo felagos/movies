@@ -42,6 +42,7 @@ function Card({ media }: CardProps) {
   return (
     <div
       className={`card ${isHovering ? 'card--expanded' : ''}`}
+      data-testid="card"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
@@ -66,7 +67,7 @@ function Card({ media }: CardProps) {
       </div>
 
       {isHovering && (
-        <div className="card__overlay">
+        <div className="card__overlay" data-testid="card-overlay">
           <p className="card__title">{media.title}</p>
           <div className="card__meta">
             <span className="card__rating">★ {media.voteAverage.toFixed(1)}</span>
