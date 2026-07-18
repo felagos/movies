@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Communication style
+
+Always use the `caveman` skill at `full` intensity for every response in this repo, every session, no exceptions unless user says "stop caveman"/"normal mode".
+
 ## Project
 
 Netflix-style browsing UI for movies/TV shows built on the TMDB API. React 19 + TypeScript + Vite, no backend — all data comes directly from `api.themoviedb.org` via client-side fetch calls authenticated with a TMDB v3 API key.
