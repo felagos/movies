@@ -36,7 +36,7 @@ Requires `VITE_TMDB_TOKEN` in `.env` — a TMDB **v3 API key** (not the v4 JWT b
 - `src/hooks/` — one hook per query, wraps an `api/tmdb.ts` function in `useQuery`. Components never call `api/tmdb.ts` directly except for pure helpers (`imageUrl`, `getBestTrailer`) — all data fetching goes through a hook. When adding a new data need, add the fetch function to `tmdb.ts` and a corresponding hook in `hooks/`, don't fetch inside components.
 - `QueryClient` is constructed once in `main.tsx` (5 min `staleTime`).
 
-**Routing** (`react-router-dom`, `createBrowserRouter` in `main.tsx`): `/` → `Home`, `/:mediaType/:id` → `Detail`, both nested under `App` (which renders the header + `<Outlet>`). `mediaType` is `'movie' | 'tv'` and is threaded through everywhere as a literal union type (`MediaType` in `api/tmdb.ts`), not a boolean flag — reuse that type rather than inventing string literals.
+**Routing** (`react-router-dom`, `createBrowserRouter` in `main.tsx`): `/` → `Home`, `/movies` → `Movies`, `/:mediaType/:id` → `Detail`, all nested under `App` (which renders the header + `<Outlet>`). `mediaType` is `'movie' | 'tv'` and is threaded through everywhere as a literal union type (`MediaType` in `api/tmdb.ts`), not a boolean flag — reuse that type rather than inventing string literals.
 
 **Hover-preview card (`components/Card/Card.tsx`)** — the trickiest piece, don't casually restyle without understanding why it's built this way:
 - On `mouseenter`, a 700ms timer delays setting `isHovering`, matching Netflix's hover-intent delay. `useVideos` is only `enabled` once `isHovering` is true (lazy-fetch trailer, not prefetched for every card).
