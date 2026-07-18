@@ -1,0 +1,85 @@
+:root {
+  --bg: oklch(0.145 0.008 30);
+  --bg-elevated: oklch(0.22 0.01 30);
+  --text: oklch(0.95 0.005 90);
+  --text-dim: oklch(0.85 0.005 90 / 0.75);
+  --accent: #e50914;
+  --border: oklch(0.4 0.01 30);
+
+  --sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  font: 16px/145% var(--sans);
+  color-scheme: dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  overflow-x: hidden;
+}
+
+h1,
+h2 {
+  font-weight: 700;
+  color: var(--text);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.35 0.01 30);
+  border-radius: 4px;
+}
+
+.error,
+.loading {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-dim);
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-elevated) 25%,
+    #22232c 37%,
+    var(--bg-elevated) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}

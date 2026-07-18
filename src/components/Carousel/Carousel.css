@@ -1,0 +1,84 @@
+.carousel {
+  padding-left: 48px;
+}
+
+@media (max-width: 640px) {
+  .carousel {
+    padding-left: 16px;
+  }
+}
+
+.carousel__title {
+  font-size: 20px;
+  margin: 0 0 16px;
+  padding-right: 48px;
+}
+
+.carousel__wrapper {
+  position: relative;
+}
+
+.carousel__track {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  padding: 8px 48px 24px 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .carousel__track {
+    padding-right: 16px;
+  }
+}
+
+/* Extra vertical padding so the hover-expanded card (poster scale + translateY + overlay)
+   never gets clipped: overflow-x: auto forces overflow-y to auto too, so any
+   overflow of the track's own box would be cut off. */
+@media (hover: hover) {
+  .carousel__track {
+    padding-top: 70px;
+    padding-bottom: 150px;
+  }
+}
+
+.carousel__arrow {
+  position: absolute;
+  top: 8px;
+  bottom: 24px;
+  width: 40px;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--text);
+  font-size: 32px;
+  cursor: pointer;
+  z-index: 10;
+  display: none;
+}
+
+.carousel__arrow--left {
+  left: 0;
+}
+
+.carousel__arrow--right {
+  right: 0;
+}
+
+@media (hover: hover) {
+  .carousel__wrapper:hover .carousel__arrow {
+    display: block;
+  }
+
+  /* Match the card row's own box, not the track's reserved hover-expansion padding. */
+  .carousel__arrow {
+    top: 70px;
+    bottom: 150px;
+  }
+}
