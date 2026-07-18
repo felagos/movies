@@ -7,9 +7,6 @@ import * as useMediaDetailsModule from '../../hooks/useMediaDetails'
 import Detail from './Detail'
 
 vi.mock('../../hooks/useMediaDetails')
-vi.mock('./TrailerTabs', () => ({
-  default: ({ trailers }: { trailers: Video[] }) => <div data-testid="trailer-tabs">{trailers.length}</div>,
-}))
 
 function mockQuery(overrides: Partial<UseQueryResult<MediaDetails, Error>>): UseQueryResult<MediaDetails, Error> {
   return {
@@ -124,12 +121,13 @@ describe('Detail', () => {
     }
 
     test('excludes non-YouTube videos', () => {
-      const videos: Video[] = [video({ id: '1', site: 'Vimeo' }), video({ id: '2', site: 'YouTube' })]
+      const videos: Video[] = [video({ id: '1', site: 'Vimeo' }), video({ id: '2', site: 'YouTube', name: 'yt-trailer' })]
       vi.spyOn(useMediaDetailsModule, 'useMediaDetails').mockReturnValue(mockQuery({ data: { ...baseDetails, videos } }))
 
       renderDetail()
 
-      expect(screen.getByTestId('trailer-tabs')).toHaveTextContent('1')
+      expect(screen.getByText('▶ yt-trailer')).toBeInTheDocument()
+      expect(screen.queryByText('▶ n')).not.toBeInTheDocument()
     })
 
     test('sorts Trailer+official videos before others', () => {
@@ -141,26 +139,30 @@ describe('Detail', () => {
 
       renderDetail()
 
-      expect(screen.getByTestId('trailer-tabs')).toHaveTextContent('2')
+      const buttons = screen.getAllByRole('button', { name: /▶/ })
+      expect(buttons[0]).toHaveTextContent('trailer')
+      expect(buttons[1]).toHaveTextContent('teaser')
     })
 
     test('slices to top 5 when more than 5 qualifying trailers exist', () => {
-      const videos: Video[] = Array.from({ length: 8 }, (_, i) => video({ id: String(i) }))
+      const videos: Video[] = Array.from({ length: 8 }, (_, i) => video({ id: String(i), name: `trailer-${i}` }))
       vi.spyOn(useMediaDetailsModule, 'useMediaDetails').mockReturnValue(mockQuery({ data: { ...baseDetails, videos } }))
 
       renderDetail()
 
-      expect(screen.getByTestId('trailer-tabs')).toHaveTextContent('5')
+      const buttons = screen.getAllByRole('button', { name: /▶/ })
+      expect(buttons).toHaveLength(5)
     })
 
     test('renders TrailerTabs section only when trailers.length > 0', () => {
       vi.spyOn(useMediaDetailsModule, 'useMediaDetails').mockReturnValue(
-        mockQuery({ data: { ...baseDetails, videos: [video({})] } }),
+        mockQuery({ data: { ...baseDetails, videos: [video({ name: 'test-trailer' })] } }),
       )
 
       renderDetail()
 
-      expect(screen.getByTestId('trailer-tabs')).toBeInTheDocument()
+      expect(screen.getByText('▶ test-trailer')).toBeInTheDocument()
+      expect(screen.getByRole('img', { hidden: true })).toBeInTheDocument()
     })
 
     test('omits trailers section entirely when no YouTube videos', () => {
@@ -170,7 +172,7 @@ describe('Detail', () => {
 
       renderDetail()
 
-      expect(screen.queryByTestId('trailer-tabs')).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /▶/ })).not.toBeInTheDocument()
     })
   })
 })
