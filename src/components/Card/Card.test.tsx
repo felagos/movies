@@ -4,6 +4,23 @@ import type { MediaSummary, Video } from '../../api/tmdb'
 import { useVideos } from '../../hooks/useVideos'
 import Card from './Card'
 
+class IntersectionObserverStub {
+  static instances: IntersectionObserverStub[] = []
+  callback: IntersectionObserverCallback
+
+  constructor(callback: IntersectionObserverCallback) {
+    this.callback = callback
+    IntersectionObserverStub.instances.push(this)
+  }
+
+  observe = vi.fn()
+  disconnect = vi.fn()
+
+  trigger(isIntersecting: boolean) {
+    this.callback([{ isIntersecting } as IntersectionObserverEntry], this as unknown as IntersectionObserver)
+  }
+}
+
 const navigateSpy = vi.fn()
 
 vi.mock('react-router-dom', async (importOriginal) => {
@@ -37,6 +54,8 @@ function renderCard(overrides: Partial<MediaSummary> = {}) {
 describe('Card', () => {
   beforeEach(() => {
     vi.useFakeTimers()
+    IntersectionObserverStub.instances = []
+    vi.stubGlobal('IntersectionObserver', IntersectionObserverStub)
     mockedUseVideos.mockReturnValue({ data: undefined } as ReturnType<typeof useVideos>)
   })
 
@@ -45,6 +64,7 @@ describe('Card', () => {
     vi.clearAllTimers()
     navigateSpy.mockClear()
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
   })
 
   afterAll(() => {
@@ -52,16 +72,42 @@ describe('Card', () => {
   })
 
   describe('poster (not hovering)', () => {
-    test('renders poster img with imageUrl(posterPath, "w300") and alt=title', () => {
+    test('starts with src="" and data-src holding the image URL', () => {
       renderCard()
 
       const img = screen.getByAltText('Some Movie') as HTMLImageElement
+      expect(img.src).toBe('')
+      expect(img.dataset.src).toBe('https://image.tmdb.org/t/p/w300/poster.jpg')
+    })
+
+    test('loads src after intersection observer fires', () => {
+      renderCard()
+      const img = screen.getByAltText('Some Movie') as HTMLImageElement
+
+      act(() => {
+        IntersectionObserverStub.instances[0].trigger(true)
+      })
+
       expect(img.src).toBe('https://image.tmdb.org/t/p/w300/poster.jpg')
+      expect(img.dataset.src).toBe('')
     })
 
     test('does not render overlay before hover', () => {
       renderCard()
       expect(screen.queryByTestId('card-overlay')).not.toBeInTheDocument()
+    })
+
+    test('shows poster loader skeleton until the img fires onLoad', () => {
+      renderCard()
+
+      expect(screen.getByTestId('poster-loader')).toBeInTheDocument()
+
+      act(() => {
+        IntersectionObserverStub.instances[0].trigger(true)
+      })
+      fireEvent.load(screen.getByAltText('Some Movie'))
+
+      expect(screen.queryByTestId('poster-loader')).not.toBeInTheDocument()
     })
   })
 

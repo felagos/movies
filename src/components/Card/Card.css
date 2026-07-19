@@ -35,6 +35,12 @@
   border: none;
 }
 
+.card__poster-loader {
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+}
+
 @media (hover: hover) {
   .card--expanded {
     z-index: 20;

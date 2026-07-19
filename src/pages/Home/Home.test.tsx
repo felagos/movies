@@ -7,12 +7,19 @@ import * as usePopular from '../../hooks/usePopular'
 import { useVideos } from '../../hooks/useVideos'
 import Home from './Home'
 
+const IntersectionObserverStub = vi.fn(() => ({
+  observe: vi.fn(),
+  disconnect: vi.fn(),
+}))
+
 vi.mock('../../hooks/usePopular')
 vi.mock('../../hooks/useVideos', () => ({
   useVideos: vi.fn(),
 }))
 
 vi.mocked(useVideos).mockReturnValue({ data: undefined } as ReturnType<typeof useVideos>)
+
+vi.stubGlobal('IntersectionObserver', IntersectionObserverStub)
 
 const movie: MediaSummary = {
   id: 1,
@@ -46,6 +53,7 @@ describe('Home', () => {
   afterEach(() => {
     cleanup()
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
   })
 
   test('renders error message when usePopularMovies isError', () => {

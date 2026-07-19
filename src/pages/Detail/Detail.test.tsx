@@ -80,9 +80,19 @@ describe('Detail', () => {
     expect(screen.getByText('★ 7.9')).toBeInTheDocument()
     expect(screen.getByText('An overview')).toBeInTheDocument()
     const poster = screen.getByAltText('Some Movie') as HTMLImageElement
-    expect(poster.src).toBe('https://image.tmdb.org/t/p/w300/p.jpg')
+    expect(poster.src).toBe('')
+    expect(poster.dataset.src).toBe('https://image.tmdb.org/t/p/w300/p.jpg')
     const hero = screen.getByTestId('detail-hero') as HTMLElement
     expect(hero.style.backgroundImage).toContain('https://image.tmdb.org/t/p/w1280/b.jpg')
+  })
+
+  test('poster has data-src attribute with lazy URL', () => {
+    vi.spyOn(useMediaDetailsModule, 'useMediaDetails').mockReturnValue(mockQuery({ data: baseDetails }))
+
+    renderDetail()
+
+    const poster = screen.getByAltText('Some Movie') as HTMLImageElement
+    expect(poster.dataset.src).toBe('https://image.tmdb.org/t/p/w300/p.jpg')
   })
 
   test('renders year from releaseDate, omits when empty', () => {

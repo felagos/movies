@@ -5,11 +5,18 @@ import type { MediaSummary } from '../../api/tmdb'
 import { useVideos } from '../../hooks/useVideos'
 import Carousel from './Carousel'
 
+const IntersectionObserverStub = vi.fn(() => ({
+  observe: vi.fn(),
+  disconnect: vi.fn(),
+}))
+
 vi.mock('../../hooks/useVideos', () => ({
   useVideos: vi.fn(),
 }))
 
 vi.mocked(useVideos).mockReturnValue({ data: undefined } as ReturnType<typeof useVideos>)
+
+vi.stubGlobal('IntersectionObserver', IntersectionObserverStub)
 
 const items: MediaSummary[] = [
   { id: 1, mediaType: 'movie', title: 'Movie A', overview: '', posterPath: null, backdropPath: null, voteAverage: 5, releaseDate: '' },
@@ -28,6 +35,7 @@ describe('Carousel', () => {
   afterEach(() => {
     cleanup()
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
   })
 
   test('renders the title', () => {

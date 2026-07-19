@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { imageUrl, type MediaType } from '../../api/tmdb'
 import { useMediaDetails } from '../../hooks/useMediaDetails'
+import { useLazyImage } from '../../hooks/useLazyImage'
 import DetailSkeleton from './DetailSkeleton'
 import TrailerTabs from './TrailerTabs'
 import './Detail.css'
@@ -8,6 +9,9 @@ import './Detail.css'
 function Detail() {
   const { mediaType, id } = useParams<{ mediaType: MediaType; id: string }>()
   const { data: details, isError, isLoading } = useMediaDetails(mediaType, id)
+
+  const posterUrl = details ? imageUrl(details.posterPath, 'w300') : ''
+  const { ref: posterRef, src: posterSrc, dataSrc: posterDataSrc } = useLazyImage(posterUrl)
 
   if (isError) return <p className="error">Could not load details from TMDB.</p>
   if (isLoading || !details) return <DetailSkeleton />
@@ -30,8 +34,10 @@ function Detail() {
       >
         <div className="detail__hero-overlay">
           <img
+            ref={posterRef}
             className="detail__poster"
-            src={imageUrl(details.posterPath, 'w300')}
+            src={posterSrc}
+            data-src={posterDataSrc}
             alt={details.title}
           />
           <div className="detail__info">

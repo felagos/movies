@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getBestTrailer, imageUrl, type MediaSummary } from '../../api/tmdb'
 import { useVideos } from '../../hooks/useVideos'
+import { useLazyImage } from '../../hooks/useLazyImage'
 import './Card.css'
 
 const HOVER_DELAY_MS = 450
@@ -13,10 +14,12 @@ interface CardProps {
 function Card({ media }: CardProps) {
   const navigate = useNavigate()
   const [isHovering, setIsHovering] = useState(false)
+  const [isPosterLoaded, setIsPosterLoaded] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const { data: videos } = useVideos(media.mediaType, media.id, isHovering)
   const trailer = videos ? getBestTrailer(videos) : null
+  const { ref: posterRef, src: posterSrc, dataSrc: posterDataSrc } = useLazyImage(imageUrl(media.posterPath, 'w300'))
 
   useEffect(() => {
     return () => {
@@ -57,12 +60,17 @@ function Card({ media }: CardProps) {
             frameBorder={0}
           />
         ) : (
-          <img
-            className="card__poster"
-            src={imageUrl(media.posterPath, 'w300')}
-            alt={media.title}
-            loading="lazy"
-          />
+          <>
+            {!isPosterLoaded && <div className="skeleton card__poster-loader" data-testid="poster-loader" />}
+            <img
+              ref={posterRef}
+              className="card__poster"
+              src={posterSrc}
+              data-src={posterDataSrc}
+              alt={media.title}
+              onLoad={() => setIsPosterLoaded(true)}
+            />
+          </>
         )}
       </div>
 

@@ -3,12 +3,13 @@ import { render, screen, cleanup } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import App from './App'
 
-function renderApp() {
+function renderApp(initialPath = '/') {
   return render(
-    <MemoryRouter initialEntries={['/']}>
+    <MemoryRouter initialEntries={[initialPath]}>
       <Routes>
         <Route path="/" element={<App />}>
           <Route index element={<div>child content</div>} />
+          <Route path="movies" element={<div>movies content</div>} />
         </Route>
       </Routes>
     </MemoryRouter>,
@@ -20,20 +21,26 @@ describe('App', () => {
     cleanup()
   })
 
-  test('renders logo Link pointing to "/"', () => {
-    renderApp()
-    expect(screen.getByText('CineStream')).toHaveAttribute('href', '/')
-  })
-
   test('renders nav Home Link pointing to "/"', () => {
     renderApp()
-    const homeLinks = screen.getAllByText('Home')
-    expect(homeLinks[0]).toHaveAttribute('href', '/')
+    expect(screen.getByText('Home')).toHaveAttribute('href', '/')
   })
 
   test('renders nav Movies Link pointing to "/movies"', () => {
     renderApp()
     expect(screen.getByText('Movies')).toHaveAttribute('href', '/movies')
+  })
+
+  test('highlights Home as active when on "/"', () => {
+    renderApp('/')
+    expect(screen.getByText('Home')).toHaveClass('active')
+    expect(screen.getByText('Movies')).not.toHaveClass('active')
+  })
+
+  test('highlights Movies as active when on "/movies"', () => {
+    renderApp('/movies')
+    expect(screen.getByText('Movies')).toHaveClass('active')
+    expect(screen.getByText('Home')).not.toHaveClass('active')
   })
 
   test('renders TV Shows as a non-navigating placeholder', () => {

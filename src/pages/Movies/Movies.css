@@ -1,10 +1,10 @@
 .movies {
-  padding: 24px 48px;
+  padding: 100px 48px 24px;
 }
 
 @media (max-width: 640px) {
   .movies {
-    padding: 24px 16px;
+    padding: 80px 16px 24px;
   }
 }
 
